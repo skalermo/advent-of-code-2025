@@ -1,5 +1,7 @@
 package day_3
 
+import "core:math"
+import "core:slice"
 import "core:strings"
 
 
@@ -13,7 +15,7 @@ parse_line :: proc(input_str: string) -> [dynamic]int {
 
 
 find_largest_digit :: proc(
-	arr: [dynamic]int,
+	arr: [dynamic]int, // todo: use slice
 	start_idx: int = 0,
 	end_idx: int = -1,
 ) -> (
@@ -61,35 +63,41 @@ sol_part_1 :: proc(input_str: string) -> int {
 
 
 sol_part_2 :: proc(input_str: string) -> int {
-	// input_str := input_str
-	// res := 0
+	input_str := input_str
+	res := 0
 
-	// for line in strings.split_lines_iterator(&input_str) {
-	// 	if len(line) == 0 do continue
-	// 	arr := parse_line(line)
-	// 	defer delete_dynamic_array(arr)
+	for line in strings.split_lines_iterator(&input_str) {
+		if len(line) == 0 do continue
+		arr := parse_line(line)
+		defer delete_dynamic_array(arr)
 
-	// 	digits_to_add := 12
-	// 	n, idx := find_largest_digit(arr)
-	// 	digits_to_add -= 1
+		digits_to_add := 12
+		digits_ids: [12]int
+		stack: [dynamic][2]int
+		defer delete_dynamic_array(stack)
+		append_elem(&stack, [2]int{0, len(arr)})
 
-	// 	stack: [dynamic]int
-	// 	append_elem(&stack, idx)
-	// 	// -1 9 1 8 7
+		for digits_to_add > 0 {
+			item := pop(&stack)
+			start, end := item[0], item[1]
+			if start == end do continue
 
-	// 	for digits_to_add > 0 {
+			n, idx := find_largest_digit(arr, start_idx = start, end_idx = end)
+			digits_ids[12 - digits_to_add] = idx
+			n = 0
 
-	// 		digits_to_add -= 1
-	// 	}
+			digits_to_add -= 1
+			append_elem(&stack, [2]int{start, idx})
+			append_elem(&stack, [2]int{idx + 1, end})
+		}
 
-	// 	if idx == len(arr) - 1 {
-	// 		n2, _ := find_largest_digit(arr, 0, len(arr) - 1)
-	// 		res += n2 * 10 + n
-	// 	} else {
-	// 		n2, _ := find_largest_digit(arr, idx + 1)
-	// 		res += n * 10 + n2
-	// 	}
-	// }
-	// return res
-	return 0
+		slice.sort(digits_ids[:])
+
+		for di, i in digits_ids {
+			d := arr[di]
+			ten_powed := int(math.pow10_f64(f64(12 - (i + 1))))
+			res += d * ten_powed
+		}
+	}
+	return res
 }
