@@ -15,7 +15,7 @@ parse_line :: proc(input_str: string) -> [dynamic]int {
 
 
 find_largest_digit :: proc(
-	arr: [dynamic]int, // todo: use slice
+	arr: []int,
 	start_idx: int = 0,
 	end_idx: int = -1,
 ) -> (
@@ -49,12 +49,12 @@ sol_part_1 :: proc(input_str: string) -> int {
 		arr := parse_line(line)
 		defer delete_dynamic_array(arr)
 
-		n, idx := find_largest_digit(arr)
+		n, idx := find_largest_digit(arr[:])
 		if idx == len(arr) - 1 {
-			n2, _ := find_largest_digit(arr, 0, len(arr) - 1)
+			n2, _ := find_largest_digit(arr[:], 0, len(arr) - 1)
 			res += n2 * 10 + n
 		} else {
-			n2, _ := find_largest_digit(arr, idx + 1)
+			n2, _ := find_largest_digit(arr[:], idx + 1)
 			res += n * 10 + n2
 		}
 	}
@@ -82,7 +82,7 @@ sol_part_2 :: proc(input_str: string) -> int {
 			start, end := item[0], item[1]
 			if start == end do continue
 
-			n, idx := find_largest_digit(arr, start_idx = start, end_idx = end)
+			n, idx := find_largest_digit(arr[:], start_idx = start, end_idx = end)
 			digits_ids[12 - digits_to_add] = idx
 			n = 0
 
