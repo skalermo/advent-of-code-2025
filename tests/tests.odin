@@ -4,3 +4,4 @@ package tests
 @(require) import "day_2"
 @(require) import "day_3"
 @(require) import "day_4"
+@(require) import "day_5"
